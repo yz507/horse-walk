@@ -43,12 +43,11 @@ void chess_board::set_horse_pos(int x, int y)
     _horse->set_pos(x, y);
 }
 
-bool chess_board::initialize(int x, int y)
+bool chess_board::initialize()
 {
-    _size_x = x;
-    _size_y = y;
-
     _coor_visited.resize(x * y);
+
+    //todo: set false
 
     _horse = new(std::nothrow) horse();
     if (!_horse) {
@@ -59,27 +58,25 @@ bool chess_board::initialize(int x, int y)
     return true;
 }
 
-bool chess_board::horse_step_one(int offx, int offy)
+bool chess_board::horse_step_one(int off_x, int off_y)
 {
     struct coordinate &horse_pos_cur = _horse->get_current_pos();
     
-    int n = _horse_pos_cur.x + offx;
+    int n = _horse_pos_cur.x + off_x;
 
     if (n >= _size_x || n < 0)
         return false;
     
-    n = _horse_pos_cur.y + offy;
+    n = _horse_pos_cur.y + off_y;
     if (n > _size_y || n < 0)
         return false;
     
-    _horse->set_horse_pos(offx, offy);
+    if (_pos_visited[off_y * _size_x + off_x] == true)
+        return false;
+    
+    _horse->set_horse_pos(off_x, off_y);
+    _pos_visited[off_y * _size_x + off_x] = true;
 
     return true;
 }
 
-//path
-
-int main(int argc, char * argv[])
-{
-    
-}

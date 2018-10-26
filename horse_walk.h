@@ -40,11 +40,12 @@ class chess_board
 {
 public:
     chess_board();
+    chess_board() : _size_x(x), _size_y(y) {};
     virtual ~chess_board();
 
-    bool initialize(int x, int y);
+    bool initialize();
 
-    void set_horse_pos(int x, int y);
+    void set_horse_pos(int off_x, int off_y);
     bool horse_step_one();
 
 private:
