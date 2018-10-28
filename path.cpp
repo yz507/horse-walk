@@ -1,6 +1,10 @@
 #include "path.h"
 #include "horse_walk.h"
 
+#include <iostream>
+
+using namespace chess;
+
 horse_path::horse_path()
 {
 }
@@ -9,12 +13,17 @@ horse_path::~horse_path()
 {
 }
 
-inline void horse_path::push_pos(struct coordinate &x)
+void horse_path::print_path()
 {
-    _path_coor.push_back(x);
-}
+    if (_path_coor.size() == 0) {
+        std::cout << "No path" << std::endl;
+    }
 
-inline void horse_path::pop_latest_pos()
-{
-    _path_coor.pop_back();
+    unsigned int i;
+    for (i = 0; i < _path_coor.size() - 1; i++) {
+        std::cout << "[" << _path_coor[i].x << ", " << _path_coor[i].y << " ], ";
+    }
+
+    i = _path_coor.size() - 1;
+    std::cout << "[" << _path_coor[i].x << ", " << _path_coor[i].y << " ]";
 }

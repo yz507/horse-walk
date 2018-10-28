@@ -17,66 +17,59 @@ bool chess_man::is_at_position(struct coordinate &pos)
 {
     return pos == _pos;
 }
+
 //horse
 
-void horse::move_next(int offx, int offy)
+const struct coordinate horse::_step_off[] = {
+        {  1,  2 },
+        {  2,  1 },
+        {  2, -1 },
+        {  1, -2 },
+        { -1, -2 },
+        { -2, -1 },
+        { -2,  1 },
+        { -1,  2 }
+    };
+
+bool horse::step_one(chess_board &board, const struct coordinate &offset)
 {
-    _pos.x += offx;
-    _pos.y += offy;
+    struct coordinate new_pos;
+
+    new_pos.x = _pos.x + offset.x;
+
+    if (new_pos.x >= board.size_col() || new_pos.x < 0)
+        return false;
+    
+    new_pos.y = _pos.y + offset.y;
+    if (new_pos.y >= board.size_row() || new_pos.y < 0)
+        return false;
+    
+    if (board.is_pos_visited(new_pos))
+        return false;
+
+    set_pos(new_pos);
+    board.set_pos_visited(new_pos);
+
+    return true;
+}
+
+bool horse::step_one(chess_board &board)
+{
+    for (unsigned i = 0; i < table_size(_step_off); i++) {
+        if (step_one(board, _step_off[i]))
+            return true;
+    }
+
+    return false;
 }
 
 //chess board
-chess_board::chess_board() : _size_x(0), _size_y(0), _horse(nullptr)
+chess_board::chess_board() : _size_x(0), _size_y(0)
 {
 }
 
-chess_board::~chess_board()
+chess_board::chess_board(int x, int y) : _size_x(x), _size_y(y) 
 {
-    if (_horse) 
-        delete _horse;
-    
-    _horse = nullptr;
-}
-
-void chess_board::set_horse_pos(int x, int y)
-{
-    _horse->set_pos(x, y);
-}
-
-bool chess_board::initialize()
-{
-    _coor_visited.resize(x * y);
-
-    //todo: set false
-
-    _horse = new(std::nothrow) horse();
-    if (!_horse) {
-        std::cout << "Fail to initialize chess board - out of memory" << std::endl;
-        return false;
-    }
-
-    return true;
-}
-
-bool chess_board::horse_step_one(int off_x, int off_y)
-{
-    struct coordinate &horse_pos_cur = _horse->get_current_pos();
-    
-    int n = _horse_pos_cur.x + off_x;
-
-    if (n >= _size_x || n < 0)
-        return false;
-    
-    n = _horse_pos_cur.y + off_y;
-    if (n > _size_y || n < 0)
-        return false;
-    
-    if (_pos_visited[off_y * _size_x + off_x] == true)
-        return false;
-    
-    _horse->set_horse_pos(off_x, off_y);
-    _pos_visited[off_y * _size_x + off_x] = true;
-
-    return true;
+    _pos_visited = std::vector<bool>(x * y, false);
 }
 
